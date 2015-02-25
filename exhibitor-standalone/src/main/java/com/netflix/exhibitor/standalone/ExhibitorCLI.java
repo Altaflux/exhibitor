@@ -95,6 +95,7 @@ public class ExhibitorCLI
     public static final String ACL_ID = "aclid";
     public static final String ACL_PERMISSIONS = "aclperms";
     public static final String SERVO_INTEGRATION = "servo";
+    public static final String EMBEDDED_ZOOKEEPER = "embeddedzookeeper";
 
     public static final String SECURITY_FILE = "security";
     public static final String REALM = "realm";
@@ -172,6 +173,7 @@ public class ExhibitorCLI
         generalOptions.addOption(null, SERVO_INTEGRATION, true, "true/false (default is false). If enabled, ZooKeeper will be queried once a minute for its state via the 'mntr' four letter word (this requires ZooKeeper 3.4.x+). Servo will be used to publish this data via JMX.");
         generalOptions.addOption(null, INITIAL_CONFIG_FILE, true, "Full path to a file that contains initial/default values for Exhibitor/ZooKeeper config values. The file is a standard property file. The property names are listed below. The file can specify some or all of the properties.");
         generalOptions.addOption(null, PREFERENCES_PATH, true, "Certain values (such as Control Panel values) are stored in a preferences file. By default, Preferences.userRoot() is used. Use this option to specify a different file path.");
+        generalOptions.addOption(null, EMBEDDED_ZOOKEEPER, true, "Use and embedded ZooKeeper instead of an external one. Default is false.");
 
         Options aclOptions = new Options();
         aclOptions.addOption(null, ACL_ID, true, "Enable ACL for Exhibitor's internal ZooKeeper connection. This sets the ACL's ID.");

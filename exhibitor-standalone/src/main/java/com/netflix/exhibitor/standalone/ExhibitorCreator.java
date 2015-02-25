@@ -148,6 +148,7 @@ public class ExhibitorCreator
         int httpPort = Integer.parseInt(commandLine.getOptionValue(HTTP_PORT, "8080"));
         String extraHeadingText = commandLine.getOptionValue(EXTRA_HEADING_TEXT, null);
         boolean allowNodeMutations = "true".equalsIgnoreCase(commandLine.getOptionValue(NODE_MUTATIONS, "true"));
+        boolean useEmbeddedZooKeeperInstance = "true".equalsIgnoreCase(commandLine.getOptionValue(EMBEDDED_ZOOKEEPER, "false"));
 
         String configType = commandLine.hasOption(SHORT_CONFIG_TYPE) ? commandLine.getOptionValue(SHORT_CONFIG_TYPE) : (commandLine.hasOption(CONFIG_TYPE) ? commandLine.getOptionValue(CONFIG_TYPE) : null);
         if ( configType == null )
@@ -225,6 +226,7 @@ public class ExhibitorCreator
             .aclProvider(aclProvider)
             .servoRegistration(servoRegistration)
             .preferencesPath(preferencesPath)
+            .embeddedZooKeeperInstance(useEmbeddedZooKeeperInstance)
         ;
 
         this.securityHandler = handler;

@@ -35,7 +35,9 @@ import com.netflix.exhibitor.core.config.IntConfigs;
 import com.netflix.exhibitor.core.config.JQueryStyle;
 import com.netflix.exhibitor.core.controlpanel.ControlPanelValues;
 import com.netflix.exhibitor.core.controlpanel.FileBasedPreferences;
+import com.netflix.exhibitor.core.embedded.ZooKeeperInstanceHandler;
 import com.netflix.exhibitor.core.index.IndexCache;
+import com.netflix.exhibitor.core.processes.EmbeddedZooKeeperProcessOperation;
 import com.netflix.exhibitor.core.processes.ProcessMonitor;
 import com.netflix.exhibitor.core.processes.ProcessOperations;
 import com.netflix.exhibitor.core.processes.StandardProcessOperations;
@@ -82,6 +84,7 @@ public class Exhibitor implements Closeable
     private final ManifestVersion               manifestVersion = new ManifestVersion();
     private final ForkJoinPool                  forkJoinPool = new ForkJoinPool();
     private final RemoteInstanceRequestClient   remoteInstanceRequestClient;
+    private final boolean                       embeddedZooKeeper;
 
     public static final int        AUTO_INSTANCE_MANAGEMENT_PERIOD_MS = 60000;
 
@@ -128,7 +131,18 @@ public class Exhibitor implements Closeable
         log = new ActivityLog(arguments.logWindowSizeLines);
         this.configManager = new ConfigManager(this, configProvider, arguments.configCheckMs);
         this.additionalUITabs = (additionalUITabs != null) ? ImmutableList.copyOf(additionalUITabs) : ImmutableList.<UITab>of();
-        this.processOperations = new StandardProcessOperations(this);
+
+        this.embeddedZooKeeper = arguments.embeddedZooKeeperInstance;
+
+        if(embeddedZooKeeper)
+        {
+            this.processOperations = new EmbeddedZooKeeperProcessOperation(this, new ZooKeeperInstanceHandler());
+        }
+        else
+        {
+            this.processOperations = new StandardProcessOperations(this);
+        }
+
         monitorRunningInstance = new MonitorRunningInstance(this);
         cleanupManager = new CleanupManager(this);
         indexCache = new IndexCache(log);
@@ -382,6 +396,10 @@ public class Exhibitor implements Closeable
             return new FileBasedPreferences(new File(arguments.preferencesPath));
         }
         return Preferences.userRoot();
+    }
+
+    public boolean isEmbeddedZooKeeper(){
+        return embeddedZooKeeper;
     }
 
     private synchronized void closeLocalConnection()
